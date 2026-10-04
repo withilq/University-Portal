@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Groups{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <h1>Manage Groups</h1>
+
+    <form method="POST" class="mt-4">
+        <div class="input-group">
+            <input
+                type="text"
+                name="name"
+                class="form-control"
+                placeholder="Group name e.g. IT-101"
+                required
+            >
+
+            <button type="submit" class="btn btn-primary">
+                Add Group
+            </button>
+        </div>
+    </form>
+
+    <hr>
+
+    <h4>Groups</h4>
+
+    {% if groups %}
+
+        <ul class="list-group mt-3">
+            {% for group in groups %}
+                <li class="list-group-item">
+                    {{ group.name }}
+                </li>
+            {% endfor %}
+        </ul>
+
+    {% else %}
+
+        <p class="text-muted">No groups yet.</p>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

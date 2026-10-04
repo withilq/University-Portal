@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Registration{% endblock %}
+
+{% block content %}
+
+<div class="auth-bg">
+
+  <div class="auth-card auth-card--wide">
+
+    <h1 class="auth-title">Registration</h1>
+
+    <form method="post">
+
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <div class="auth-field">
+        <input type="text" name="username" id="username" placeholder=" " required maxlength="50"
+               autocomplete="username" autofocus value="{{ request.form.get('username', '') }}">
+        <label for="username">Username</label>
+        <i class="bi bi-person auth-icon" aria-hidden="true"></i>
+      </div>
+
+      <div class="auth-field">
+        <input type="email" name="email" id="email" placeholder=" " required
+               autocomplete="email" value="{{ request.form.get('email', '') }}">
+        <label for="email">Email</label>
+        <i class="bi bi-envelope auth-icon" aria-hidden="true"></i>
+      </div>
+
+      <div class="auth-row">
+
+        <div class="auth-field">
+          <input type="password" name="password" id="password" placeholder=" " required minlength="6"
+                 autocomplete="new-password">
+          <label for="password">Password</label>
+
+          <button type="button" class="auth-icon auth-toggle" data-toggle-for="password" aria-label="Show password">
+            <i class="bi bi-eye-slash"></i>
+          </button>
+        </div>
+
+        <div class="auth-field">
+          <input type="password" name="confirm" id="confirm" placeholder=" " required minlength="6"
+                 autocomplete="new-password">
+          <label for="confirm">Confirm Password</label>
+
+          <button type="button" class="auth-icon auth-toggle" data-toggle-for="confirm" aria-label="Show password">
+            <i class="bi bi-eye-slash"></i>
+          </button>
+        </div>
+
+      </div>
+
+      <div class="auth-role-group">
+
+        <span class="auth-role-title">Role</span>
+
+        <div class="auth-role" role="group" aria-label="Role">
+
+          <input type="radio" name="role" id="r-student" value="student"
+                 {% if request.form.get('role', 'student') == 'student' %}checked{% endif %}>
+
+          <label for="r-student">
+            <i class="bi bi-person"></i> Student
+          </label>
+
+          <input type="radio" name="role" id="r-teacher" value="teacher"
+                 {% if request.form.get('role') == 'teacher' %}checked{% endif %}>
+
+          <label for="r-teacher">
+            <i class="bi bi-person-workspace"></i> Teacher
+          </label>
+
+        </div>
+
+      </div>
+
+      <button class="auth-submit">Register</button>
+
+    </form>
+
+    <p class="auth-footer">
+      <span>Already have an account?</span>
+      <a href="{{ url_for('login') }}">Login</a>
+    </p>
+
+  </div>
+
+</div>
+
+<script>
+
+  document.querySelectorAll('[data-toggle-for]').forEach(function (btn) {
+
+    var input = document.getElementById(btn.getAttribute('data-toggle-for'));
+
+    if (!input) return;
+
+    btn.addEventListener('click', function () {
+
+      var show = input.type === 'password';
+
+      input.type = show ? 'text' : 'password';
+
+      btn.querySelector('i').className = show ? 'bi bi-eye' : 'bi bi-eye-slash';
+
+      btn.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+
+    });
+
+  });
+
+</script>
+
+{% endblock %}

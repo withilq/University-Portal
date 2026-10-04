@@ -1,0 +1,315 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap");
+
+body {
+  font-family: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+}
+
+.navbar {
+  background: linear-gradient(90deg, #0d6efd, #3d8bfd) !important;
+}
+
+.card {
+  border-radius: 0.75rem;
+}
+
+.card-header {
+  border-top-left-radius: 0.75rem !important;
+  border-top-right-radius: 0.75rem !important;
+}
+
+.stat-card {
+  transition: transform 0.15s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+}
+
+.grade-chip {
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.15s ease;
+}
+
+.grade-chip:hover {
+  background-color: #0d6efd !important;
+}
+
+/* =========================================================
+   LOGIN – glass card over full-bleed background
+   ========================================================= */
+
+:root {
+  --auth-ink: #0b1a2b;          /* title, input text, underline */
+  --auth-ink-soft: #2b3f55;     /* labels */
+  --auth-light: #ffffff;        /* footer text */
+  --auth-accent: #7fb0ee;       /* focus / button */
+}
+
+/* page can't scroll sideways because of the 100vw bleed below */
+body:has(.auth-bg) {
+  overflow: hidden;
+}
+
+.auth-bg {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: auto;
+  min-height: 0;
+  margin: 0;
+  padding: 2rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
+  font-family: "Montserrat", "Segoe UI", system-ui, sans-serif;
+
+  background:
+    url("images/backgroundphoto.jpg") center bottom / cover no-repeat,
+    linear-gradient(180deg, #d6e4fb 0%, #8db8ee 38%, #3f86b8 62%, #12485f 82%, #081a26 100%);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 565px;
+  padding: 2.4rem 3.4rem 2.2rem;
+  border-radius: 24px;
+  color: var(--auth-ink);
+
+  background:
+    linear-gradient(165deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.2) 45%, rgba(255, 255, 255, 0.06) 100%);
+  -webkit-backdrop-filter: blur(26px) saturate(1.15);
+  backdrop-filter: blur(26px) saturate(1.15);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 24px 60px rgba(8, 30, 50, 0.28);
+}
+
+.auth-title {
+  margin: 0 0 3rem;
+  text-align: center;
+  font-size: 1.55rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--auth-ink);
+}
+
+/* ---------- underline fields with floating label ---------- */
+
+.auth-field {
+  position: relative;
+  margin-bottom: 2.1rem;
+  border-bottom: 1.5px solid var(--auth-ink);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.auth-field:focus-within {
+  border-bottom-color: #ffffff;
+  box-shadow: 0 1.5px 0 0 #ffffff;
+}
+
+.auth-field input {
+  width: 100%;
+  padding: 1.35rem 2.2rem 0.45rem 0.55rem;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--auth-ink);
+  background: transparent;
+  border: 0;
+  outline: 0;
+}
+
+.auth-field input:-webkit-autofill {
+  -webkit-text-fill-color: var(--auth-ink);
+  transition: background-color 9999s ease-out;
+}
+
+.auth-field label {
+  position: absolute;
+  left: 0.55rem;
+  top: 0.8rem;
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: var(--auth-ink);
+  pointer-events: none;
+  transform-origin: left top;
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.auth-field input:focus + label,
+.auth-field input:not(:placeholder-shown) + label {
+  transform: translateY(-0.75rem) scale(0.74);
+  color: var(--auth-ink-soft);
+}
+
+.auth-icon {
+  position: absolute;
+  right: 0.3rem;
+  bottom: 0.55rem;
+  font-size: 1.05rem;
+  line-height: 1;
+  color: var(--auth-ink);
+}
+
+.auth-toggle {
+  padding: 0.15rem;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.auth-toggle:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ---------- submit button ---------- */
+
+.auth-submit {
+  display: block;
+  width: 100%;
+  margin-top: 3.2rem;
+  padding: 0.55rem 1rem;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #ffffff;
+  background: linear-gradient(180deg, #5d86c4 0%, #86b6f2 100%);
+  border: 0;
+  border-radius: 8px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 6px 16px rgba(10, 40, 80, 0.25);
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+
+.auth-submit:hover {
+  filter: brightness(1.08);
+}
+
+.auth-submit:active {
+  transform: translateY(1px);
+}
+
+.auth-submit:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 3px;
+}
+
+/* ---------- footer row ---------- */
+
+.auth-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 1.3rem 0 0;
+  font-size: 0.98rem;
+  font-weight: 500;
+  color: var(--auth-light);
+}
+
+.auth-footer a {
+  font-weight: 700;
+  color: var(--auth-light);
+  text-decoration: none;
+}
+
+.auth-footer a:hover,
+.auth-footer a:focus-visible {
+  text-decoration: underline;
+}
+/* ---------- wide card (login + register) ---------- */
+
+.auth-card--wide {
+  max-width: 680px;
+}
+
+.auth-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.auth-role-group {
+  margin-bottom: 0.5rem;
+}
+
+.auth-role-title {
+  display: block;
+  margin-bottom: 0.6rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--auth-ink-soft);
+}
+
+.auth-role {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.auth-role input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.auth-role label {
+  flex: 1;
+  padding: 0.55rem 0.8rem;
+  text-align: center;
+  font-weight: 500;
+  color: var(--auth-ink);
+  background: rgba(255, 255, 255, 0.25);
+  border: 1.5px solid var(--auth-ink);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.auth-role input:checked + label {
+  background: var(--auth-ink);
+  color: #ffffff;
+}
+
+.auth-role input:focus-visible + label {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}
+
+@media (max-width: 575.98px) {
+  .auth-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
+/* ---------- responsive ---------- */
+
+@media (max-width: 575.98px) {
+  .auth-card {
+    padding: 2rem 1.5rem 1.8rem;
+    border-radius: 20px;
+  }
+
+  .auth-title {
+    margin-bottom: 2.2rem;
+  }
+
+  .auth-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+  }
+}
+
+/* browsers without backdrop-filter: make the card more opaque */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .auth-card {
+    background: rgba(214, 228, 251, 0.85);
+  }
+}

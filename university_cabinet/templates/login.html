@@ -1,0 +1,47 @@
+{% extends "base.html" %} 
+{% block title %}Login{% endblock %} 
+{% block content %} 
+<div class="auth-bg"> 
+  <div class="auth-card"> 
+    <h1 class="auth-title">Login</h1> 
+    <form method="post"> 
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"> 
+ 
+      <div class="auth-field"> 
+        <input type="text" name="username" id="username" placeholder=" " required autofocus autocomplete="username"> 
+        <label for="username">Username</label> 
+        <i class="bi bi-person auth-icon" aria-hidden="true"></i> 
+      </div> 
+ 
+      <div class="auth-field"> 
+        <input type="password" name="password" id="password" placeholder=" " required autocomplete="current-password"> 
+        <label for="password">Password</label> 
+        <button type="button" class="auth-icon auth-toggle" id="togglePassword" aria-label="Show password"> 
+          <i class="bi bi-eye-slash"></i> 
+        </button> 
+      </div> 
+ 
+      <button class="auth-submit">Login</button> 
+    </form> 
+ 
+    <p class="auth-footer"> 
+      <span>Don't have an account?</span> 
+      <a href="{{ url_for('register') }}">Register</a> 
+    </p> 
+  </div> 
+</div> 
+ 
+<script> 
+  (function () { 
+    var btn = document.getElementById('togglePassword'); 
+    var input = document.getElementById('password'); 
+    if (!btn || !input) return; 
+    btn.addEventListener('click', function () { 
+      var show = input.type === 'password'; 
+      input.type = show ? 'text' : 'password'; 
+      btn.querySelector('i').className = show ? 'bi bi-eye' : 'bi bi-eye-slash'; 
+      btn.setAttribute('aria-label', show ? 'Hide password' : 'Show password'); 
+    }); 
+  })(); 
+</script> 
+{% endblock %}

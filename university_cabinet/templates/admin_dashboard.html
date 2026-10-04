@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <h1>Admin Dashboard</h1>
+    <p>Welcome, Admin!</p>
+
+    <div class="row g-3 mt-3">
+
+        <div class="col-md-3">
+            <div class="card p-3">
+                <h5>Students</h5>
+                <h2>{{ student_count }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-3">
+                <h5>Teachers</h5>
+                <h2>{{ teacher_count }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-3">
+                <h5>Groups</h5>
+                <h2>{{ group_count }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-3">
+                <h5>Subjects</h5>
+                <h2>{{ subject_count }}</h2>
+            </div>
+        </div>
+
+    </div>
+
+    <hr class="my-4">
+
+    <div class="d-flex gap-3">
+        <a href="{{ url_for('manage_groups') }}" class="btn btn-primary">
+    Manage Groups
+        </a>
+
+        <a href="#" class="btn btn-primary">
+            Manage Subjects
+        </a>
+
+        <a href="#" class="btn btn-primary">
+            Assign Teachers
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}
