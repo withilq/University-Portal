@@ -6,10 +6,19 @@
 
 <div class="container py-4">
 
-    <h1>Manage Groups</h1>
+    <h1 class="mb-4">Manage Groups</h1>
 
-    <form method="POST" class="mt-4">
-        <div class="input-group">
+    <!-- CREATE GROUP -->
+    <div class="card p-4 mb-4">
+
+        <h4>Create New Group</h4>
+
+        <form method="POST" class="d-flex gap-2 mt-3">
+
+            <input type="hidden"
+                   name="csrf_token"
+                   value="{{ csrf_token() }}">
+
             <input
                 type="text"
                 name="name"
@@ -21,29 +30,185 @@
             <button type="submit" class="btn btn-primary">
                 Add Group
             </button>
-        </div>
-    </form>
 
-    <hr>
+        </form>
+
+    </div>
+
+
+    <!-- GROUPS -->
 
     <h4>Groups</h4>
 
     {% if groups %}
 
-        <ul class="list-group mt-3">
-            {% for group in groups %}
-                <li class="list-group-item">
-                    {{ group.name }}
-                </li>
-            {% endfor %}
-        </ul>
+        {% for group in groups %}
 
+        <div class="card mt-3">
+
+            <!-- GROUP HEADER -->
+            <div class="card-header d-flex justify-content-between align-items-center">
+
+                <div>
+                    <strong>{{ group.name }}</strong>
+
+                    <span class="text-muted">
+                        — {{ group.students|length }} students
+                    </span>
+                </div>
+
+
+                <!-- DELETE GROUP -->
+
+                {% if group.students|length == 0 %}
+
+                <form
+                    method="POST"
+                    action="{{ url_for('delete_group', group_id=group.id) }}"
+                >
+
+                    <input type="hidden"
+                           name="csrf_token"
+                           value="{{ csrf_token() }}">
+
+                    <button
+                        type="submit"
+                        class="btn btn-danger btn-sm"
+                        onclick="return confirm('Delete this group?')"
+                    >
+                        Delete
+                    </button>
+
+                </form>
+
+                {% else %}
+
+                <button
+                    class="btn btn-secondary btn-sm"
+                    disabled
+                >
+                    Cannot Delete
+                </button>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- GROUP BODY -->
+
+            <div class="card-body">
+
+                <h6>Students</h6>
+
+
+                {% if group.students %}
+
+                    <ul class="list-group mb-3">
+
+                        {% for student in group.students %}
+
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+
+                            {{ student.username }}
+
+                            <form
+                                method="POST"
+                                action="{{ url_for(
+                                    'remove_student_from_group',
+                                    group_id=group.id,
+                                    student_id=student.id
+                                ) }}"
+                            >
+
+                                <input type="hidden"
+                                       name="csrf_token"
+                                       value="{{ csrf_token() }}">
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-warning btn-sm"
+                                >
+                                    Remove
+                                </button>
+
+                            </form>
+
+                        </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                {% else %}
+
+                    <p class="text-muted">
+                        No students in this group.
+                    </p>
+
+                {% endif %}
+
+
+                <!-- ADD STUDENT -->
+
+                {% if students_without_group %}
+
+                <form
+                    method="POST"
+                    action="{{ url_for(
+                        'add_student_to_group',
+                        group_id=group.id
+                    ) }}"
+                    class="d-flex gap-2 mt-3"
+                >
+
+                    <input type="hidden"
+                           name="csrf_token"
+                           value="{{ csrf_token() }}">
+
+                    <select
+                        name="student_id"
+                        class="form-select"
+                        required
+                    >
+
+                        <option value="">
+                            Select student
+                        </option>
+
+                        {% for student in students_without_group %}
+
+                        <option value="{{ student.id }}">
+                            {{ student.username }}
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                    <button
+                        type="submit"
+                        class="btn btn-success"
+                    >
+                        Add Student
+                    </button>
+
+                </form>
+
+                {% else %}
+
+                <p class="text-muted mt-3">
+                    No students without a group.
+                </p>
+
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
     {% else %}
-
-        <p class="text-muted">No groups yet.</p>
-
+        <p class="text-muted">
+            No groups yet.
+        </p>
     {% endif %}
-
 </div>
-
 {% endblock %}

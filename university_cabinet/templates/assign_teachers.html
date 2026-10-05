@@ -1,0 +1,251 @@
+{% extends "base.html" %}
+
+{% block title %}Assign Teachers{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <h1 class="mb-4">Assign Teachers</h1>
+
+    <!-- ASSIGN TEACHER -->
+
+    <div class="card p-4 mb-4">
+
+        <h4>New Assignment</h4>
+
+        <form method="POST" class="mt-3">
+
+            <input type="hidden"
+                   name="csrf_token"
+                   value="{{ csrf_token() }}">
+
+            <!-- TEACHER -->
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Teacher
+                </label>
+
+                <select name="teacher_id"
+                        class="form-select"
+                        required>
+
+                    <option value="">
+                        Select teacher
+                    </option>
+
+                    {% for teacher in teachers %}
+
+                    <option value="{{ teacher.id }}">
+                        {{ teacher.username }}
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <!-- SUBJECT -->
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Subject
+                </label>
+
+                <select name="subject_id"
+                        class="form-select"
+                        required>
+
+                    <option value="">
+                        Select subject
+                    </option>
+
+                    {% for subject in subjects %}
+
+                    <option value="{{ subject.id }}">
+                        {{ subject.name }}
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <!-- GROUP -->
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Group
+                </label>
+
+                <select name="group_id"
+                        class="form-select"
+                        required>
+
+                    <option value="">
+                        Select group
+                    </option>
+
+                    {% for group in groups %}
+
+                    <option value="{{ group.id }}">
+                        {{ group.name }}
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <!-- ACADEMIC YEAR -->
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Academic Year
+                </label>
+
+                <input type="text"
+                       name="academic_year"
+                       class="form-control"
+                       placeholder="e.g. 2026-2027"
+                       required>
+
+            </div>
+
+
+            <!-- SEMESTER -->
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Semester
+                </label>
+
+                <input type="text"
+                       name="semester"
+                       class="form-control"
+                       placeholder="e.g. Semester 1"
+                       required>
+
+            </div>
+
+
+            <button type="submit"
+                    class="btn btn-primary">
+
+                Assign Teacher
+
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- CURRENT ASSIGNMENTS -->
+
+    <h4>Current Assignments</h4>
+
+    {% if assignments %}
+
+    <div class="table-responsive mt-3">
+
+        <table class="table table-hover">
+
+            <thead class="table-light">
+
+                <tr>
+                    <th>Teacher</th>
+                    <th>Subject</th>
+                    <th>Group</th>
+                    <th>Academic Year</th>
+                    <th>Semester</th>
+                    <th></th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for assignment in assignments %}
+
+                <tr>
+
+                    <td>
+                        {{ assignment.teacher.username }}
+                    </td>
+
+                    <td>
+                        {{ assignment.subject.name }}
+                    </td>
+
+                    <td>
+                        {{ assignment.group.name }}
+                    </td>
+
+                    <td>
+                        {{ assignment.academic_year.name }}
+                    </td>
+
+                    <td>
+                        {{ assignment.semester.name }}
+                    </td>
+
+                    <td class="text-end">
+
+                        <form
+                            method="POST"
+                            action="{{ url_for(
+                                'delete_teacher_assignment',
+                                assignment_id=assignment.id
+                            ) }}"
+                        >
+
+                            <input type="hidden"
+                                   name="csrf_token"
+                                   value="{{ csrf_token() }}">
+
+                            <button
+                                type="submit"
+                                class="btn btn-danger btn-sm"
+                                onclick="return confirm('Remove this assignment?')"
+                            >
+                                Remove
+                            </button>
+
+                        </form>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    {% else %}
+
+    <p class="text-muted mt-3">
+        No teacher assignments yet.
+    </p>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

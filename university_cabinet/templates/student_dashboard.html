@@ -1,65 +1,223 @@
 {% extends "base.html" %}
+
 {% block title %}Tələbə Kabineti{% endblock %}
+
 {% block content %}
-<h2 class="mb-4"><i class="bi bi-speedometer2 text-primary"></i> Tələbə Kabineti</h2>
+
+<h2 class="mb-4">
+    <i class="bi bi-speedometer2 text-primary"></i>
+    Tələbə Kabineti
+</h2>
+
+
+<!-- PERSONAL INFORMATION -->
 
 <div class="row g-3 mb-4">
-  <div class="col-md-5">
-    <div class="card shadow-sm border-0 h-100">
-      <div class="card-body">
-        <h5 class="card-title mb-3"><i class="bi bi-person-badge"></i> Şəxsi məlumatlar</h5>
-        <p class="mb-1"><strong>İstifadəçi adı:</strong> {{ current_user.username }}</p>
-        <p class="mb-1"><strong>E-poçt:</strong> {{ current_user.email }}</p>
-        <p class="mb-0"><strong>Rol:</strong> Tələbə</p>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-7">
-    <div class="row g-3 h-100">
-      <div class="col-6">
-        <div class="card shadow-sm border-0 h-100 text-center stat-card">
-          <div class="card-body">
-            <div class="text-muted small">Fənlərin sayı</div>
-            <div class="display-6 fw-bold text-primary">{{ grades|length }}</div>
-          </div>
+
+    <div class="col-md-5">
+
+        <div class="card shadow-sm border-0 h-100">
+
+            <div class="card-body">
+
+                <h5 class="card-title mb-3">
+                    <i class="bi bi-person-badge"></i>
+                    Şəxsi məlumatlar
+                </h5>
+
+                <p class="mb-1">
+                    <strong>İstifadəçi adı:</strong>
+                    {{ current_user.username }}
+                </p>
+
+                <p class="mb-1">
+                    <strong>E-poçt:</strong>
+                    {{ current_user.email }}
+                </p>
+
+                <p class="mb-1">
+                    <strong>Rol:</strong>
+                    Tələbə
+                </p>
+
+                <p class="mb-0">
+                    <strong>Qrup:</strong>
+
+                    {% if current_user.group %}
+                        {{ current_user.group.name }}
+                    {% else %}
+                        <span class="text-muted">
+                            Qrup təyin edilməyib
+                        </span>
+                    {% endif %}
+
+                </p>
+
+            </div>
+
         </div>
-      </div>
-      <div class="col-6">
-        <div class="card shadow-sm border-0 h-100 text-center stat-card">
-          <div class="card-body">
-            <div class="text-muted small">Orta bal</div>
-            <div class="display-6 fw-bold text-success">{{ average if average is not none else '—' }}</div>
-          </div>
-        </div>
-      </div>
+
     </div>
-  </div>
+
+
+    <!-- STATISTICS -->
+
+    <div class="col-md-7">
+
+        <div class="row g-3 h-100">
+
+            <div class="col-6">
+
+                <div class="card shadow-sm border-0 h-100 text-center stat-card">
+
+                    <div class="card-body">
+
+                        <div class="text-muted small">
+                            Fənlərin sayı
+                        </div>
+
+                        <div class="display-6 fw-bold text-primary">
+                            {{ grades|length }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-6">
+
+                <div class="card shadow-sm border-0 h-100 text-center stat-card">
+
+                    <div class="card-body">
+
+                        <div class="text-muted small">
+                            Orta bal
+                        </div>
+
+                        <div class="display-6 fw-bold text-success">
+                            {{ average if average is not none else '—' }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
 
+
+<!-- GRADES -->
+
 <div class="card shadow-sm border-0">
-  <div class="card-header bg-white fw-semibold"><i class="bi bi-journal-text"></i> Qiymətlərim</div>
-  <div class="table-responsive">
-    <table class="table table-hover align-middle mb-0">
-      <thead class="table-light">
-        <tr><th>#</th><th>Fənn</th><th>Semestr</th><th class="text-end">Bal</th></tr>
-      </thead>
-      <tbody>
-        {% for g in grades %}
-        <tr>
-          <td>{{ loop.index }}</td>
-          <td>{{ g.subject }}</td>
-          <td>{{ g.semester }}</td>
-          <td class="text-end">
-            <span class="badge fs-6 {{ 'bg-success' if g.grade >= 70 else 'bg-warning text-dark' if g.grade >= 50 else 'bg-danger' }}">
-              {{ '%g'|format(g.grade) }}
-            </span>
-          </td>
-        </tr>
-        {% else %}
-        <tr><td colspan="4" class="text-center text-muted py-4">Hələ qiymət əlavə olunmayıb.</td></tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+
+    <div class="card-header bg-white fw-semibold">
+
+        <i class="bi bi-journal-text"></i>
+        Qiymətlərim
+
+    </div>
+
+
+    <div class="table-responsive">
+
+        <table class="table table-hover align-middle mb-0">
+
+            <thead class="table-light">
+
+                <tr>
+                    <th>#</th>
+                    <th>Fənn</th>
+                    <th>Semestr</th>
+                    <th class="text-end">Bal</th>
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for g in grades %}
+
+                <tr>
+
+                    <td>
+                        {{ loop.index }}
+                    </td>
+
+
+                    <td>
+
+                        {% if g.subject %}
+                            {{ g.subject.name }}
+                        {% else %}
+                            —
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+
+                        {% if g.semester %}
+                            {{ g.semester.name }}
+
+                            {% if g.semester.academic_year %}
+                                ({{ g.semester.academic_year.name }})
+                            {% endif %}
+
+                        {% else %}
+                            —
+                        {% endif %}
+
+                    </td>
+
+
+                    <td class="text-end">
+
+                        <span class="badge fs-6
+                            {{ 'bg-success'
+                            if g.grade >= 70
+                            else 'bg-warning text-dark'
+                            if g.grade >= 50
+                            else 'bg-danger' }}">
+
+                            {{ '%g'|format(g.grade) }}
+
+                        </span>
+
+                    </td>
+
+                </tr>
+
+                {% else %}
+
+                <tr>
+
+                    <td colspan="4"
+                        class="text-center text-muted py-4">
+
+                        Hələ qiymət əlavə olunmayıb.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
 </div>
+
 {% endblock %}

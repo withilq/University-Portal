@@ -13,9 +13,8 @@ app.config["SECRET_KEY"] = os.environ.get(
     "SECRET_KEY",
     "dev-secret-deyishdirin"
 )
-app.config["SQLALCHEMY_DATABASE_URI"] = (
-    "sqlite:///C:/Users/Ilqare/Downloads/university_cabinet/university_cabinet/university.db"
-)
+basedir = os.path.abspath(os.path.dirname(__file__))
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(basedir, "university.db")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 csrf = CSRFProtect(app)
@@ -186,25 +185,38 @@ class Semester(db.Model):
         ),
     )
 class TeacherAssignment(db.Model):
-    id = db.Column(
-        db.Integer,
-        primary_key=True
-    )
+    id = db.Column(db.Integer, primary_key=True)
+
     teacher_id = db.Column(
         db.Integer,
         db.ForeignKey("user.id"),
         nullable=False
     )
+
     subject_id = db.Column(
         db.Integer,
         db.ForeignKey("subject.id"),
         nullable=False
     )
+
     group_id = db.Column(
         db.Integer,
         db.ForeignKey("group.id"),
         nullable=False
     )
+
+    academic_year_id = db.Column(
+        db.Integer,
+        db.ForeignKey("academic_year.id"),
+        nullable=False
+    )
+
+    semester_id = db.Column(
+        db.Integer,
+        db.ForeignKey("semester.id"),
+        nullable=False
+    )
+
     teacher = db.relationship(
         "User",
         back_populates="teacher_assignments",
@@ -221,12 +233,21 @@ class TeacherAssignment(db.Model):
         back_populates="teacher_assignments"
     )
 
-    # Same Subject + Group cannot belong to two teachers
+    academic_year = db.relationship(
+        "AcademicYear"
+    )
+
+    semester = db.relationship(
+        "Semester"
+    )
+
     __table_args__ = (
         db.UniqueConstraint(
             "subject_id",
             "group_id",
-            name="uq_subject_group_teacher"
+            "academic_year_id",
+            "semester_id",
+            name="uq_subject_group_year_semester"
         ),
     )
 
@@ -520,6 +541,7 @@ def manage_groups():
     if current_user.role != "admin":
         abort(403)
 
+    # Create group
     if request.method == "POST":
         name = request.form.get("name", "").strip()
 
@@ -535,11 +557,292 @@ def manage_groups():
 
     groups = Group.query.order_by(Group.name).all()
 
+    students_without_group = User.query.filter_by(
+        role="student",
+        group_id=None
+    ).order_by(User.username).all()
+
     return render_template(
         "manage_groups.html",
-        groups=groups
+        groups=groups,
+        students_without_group=students_without_group
+    )
+@app.route("/admin/groups/<int:group_id>/add-student", methods=["POST"])
+@login_required
+def add_student_to_group(group_id):
+
+    if current_user.role != "admin":
+        abort(403)
+
+    group = db.session.get(Group, group_id)
+
+    if not group:
+        abort(404)
+
+    student_id = request.form.get("student_id")
+
+    student = User.query.filter_by(
+        id=student_id,
+        role="student"
+    ).first()
+
+    if student:
+        student.group_id = group.id
+        db.session.commit()
+
+    return redirect(url_for("manage_groups"))
+
+
+@app.route("/admin/groups/<int:group_id>/remove-student/<int:student_id>", methods=["POST"])
+@login_required
+def remove_student_from_group(group_id, student_id):
+
+    if current_user.role != "admin":
+        abort(403)
+
+    student = User.query.filter_by(
+        id=student_id,
+        role="student",
+        group_id=group_id
+    ).first()
+
+    if student:
+        student.group_id = None
+        db.session.commit()
+
+    return redirect(url_for("manage_groups"))
+
+
+@app.route("/admin/groups/<int:group_id>/delete", methods=["POST"])
+@login_required
+def delete_group(group_id):
+
+    if current_user.role != "admin":
+        abort(403)
+
+    group = db.session.get(Group, group_id)
+
+    if not group:
+        abort(404)
+
+    if group.students:
+        return redirect(url_for("manage_groups"))
+
+    db.session.delete(group)
+    db.session.commit()
+
+    return redirect(url_for("manage_groups"))
+@app.route("/admin/subjects", methods=["GET", "POST"])
+@login_required
+def manage_subjects():
+
+    if current_user.role != "admin":
+        abort(403)
+
+    if request.method == "POST":
+
+        name = request.form.get("name", "").strip()
+
+        if name:
+            existing_subject = Subject.query.filter_by(name=name).first()
+
+            if not existing_subject:
+                subject = Subject(name=name)
+                db.session.add(subject)
+                db.session.commit()
+
+        return redirect(url_for("manage_subjects"))
+
+    subjects = Subject.query.order_by(Subject.name).all()
+
+    return render_template(
+        "manage_subjects.html",
+        subjects=subjects
+    )
+@app.route("/admin/subjects/<int:subject_id>/delete", methods=["POST"])
+@login_required
+def delete_subject(subject_id):
+
+    if current_user.role != "admin":
+        abort(403)
+
+    subject = db.session.get(Subject, subject_id)
+
+    if not subject:
+        abort(404)
+
+    if subject.teacher_assignments or subject.grades:
+        return redirect(url_for("manage_subjects"))
+
+    db.session.delete(subject)
+    db.session.commit()
+
+    return redirect(url_for("manage_subjects"))
+@app.route("/admin/assign-teachers", methods=["GET", "POST"])
+@login_required
+def assign_teachers():
+
+    if current_user.role != "admin":
+        abort(403)
+
+    teachers = User.query.filter_by(
+        role="teacher"
+    ).order_by(User.username).all()
+
+    subjects = Subject.query.order_by(
+        Subject.name
+    ).all()
+
+    groups = Group.query.order_by(
+        Group.name
+    ).all()
+
+    if request.method == "POST":
+
+        teacher_id = request.form.get(
+            "teacher_id",
+            type=int
+        )
+
+        subject_id = request.form.get(
+            "subject_id",
+            type=int
+        )
+
+        group_id = request.form.get(
+            "group_id",
+            type=int
+        )
+
+        academic_year_name = request.form.get(
+            "academic_year",
+            ""
+        ).strip()
+
+        semester_name = request.form.get(
+            "semester",
+            ""
+        ).strip()
+
+        # Check required fields
+
+        if not teacher_id or not subject_id or not group_id:
+            flash(
+                "Please select teacher, subject and group.",
+                "danger"
+            )
+            return redirect(url_for("assign_teachers"))
+
+        if not academic_year_name or not semester_name:
+            flash(
+                "Please enter academic year and semester.",
+                "danger"
+            )
+            return redirect(url_for("assign_teachers"))
+
+        # Find or create Academic Year
+
+        academic_year = AcademicYear.query.filter_by(
+            name=academic_year_name
+        ).first()
+
+        if not academic_year:
+
+            academic_year = AcademicYear(
+                name=academic_year_name
+            )
+
+            db.session.add(academic_year)
+            db.session.commit()
+
+        # Find or create Semester
+
+        semester = Semester.query.filter_by(
+            name=semester_name,
+            academic_year_id=academic_year.id
+        ).first()
+
+        if not semester:
+
+            semester = Semester(
+                name=semester_name,
+                academic_year_id=academic_year.id
+            )
+
+            db.session.add(semester)
+            db.session.commit()
+
+        # Check existing assignment
+
+        existing = TeacherAssignment.query.filter_by(
+            subject_id=subject_id,
+            group_id=group_id,
+            academic_year_id=academic_year.id,
+            semester_id=semester.id
+        ).first()
+
+        if existing:
+
+            flash(
+                "This subject is already assigned to this group for this academic year and semester.",
+                "warning"
+            )
+
+        else:
+
+            assignment = TeacherAssignment(
+                teacher_id=teacher_id,
+                subject_id=subject_id,
+                group_id=group_id,
+                academic_year_id=academic_year.id,
+                semester_id=semester.id
+            )
+
+            db.session.add(assignment)
+            db.session.commit()
+
+            flash(
+                "Teacher assignment added successfully.",
+                "success"
+            )
+
+        return redirect(
+            url_for("assign_teachers")
+        )
+
+    assignments = TeacherAssignment.query.order_by(
+        TeacherAssignment.id.desc()
+    ).all()
+
+    return render_template(
+        "assign_teachers.html",
+        teachers=teachers,
+        subjects=subjects,
+        groups=groups,
+        assignments=assignments
+    )
+@app.route(
+    "/admin/assign-teachers/<int:assignment_id>/delete",
+    methods=["POST"]
+)
+@login_required
+def delete_teacher_assignment(assignment_id):
+
+    if current_user.role != "admin":
+        abort(403)
+
+    assignment = db.session.get(
+        TeacherAssignment,
+        assignment_id
     )
 
+    if not assignment:
+        abort(404)
+
+    db.session.delete(assignment)
+    db.session.commit()
+
+    return redirect(url_for("assign_teachers"))
 # =========================================================
 # STUDENT DASHBOARD
 # =========================================================
@@ -578,12 +881,23 @@ def teacher_dashboard():
         teacher_id=current_user.id
     ).all()
 
+    students = []
+
+    for assignment in assignments:
+        for student in assignment.group.students:
+            if student not in students:
+                students.append(student)
+
+    semesters = Semester.query.order_by(
+        Semester.id.desc()
+    ).all()
+
     return render_template(
         "teacher_dashboard.html",
-        assignments=assignments
+        assignments=assignments,
+        students=students,
+        semesters=semesters
     )
-
-
 # =========================================================
 # SAVE GRADE
 # =========================================================
@@ -755,7 +1069,6 @@ def forbidden(_):
 # =========================================================
 with app.app_context():
     db.create_all()
-
     if not User.query.filter_by(username="admin").first():
         admin = User(
             username="admin",
