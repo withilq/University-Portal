@@ -6,13 +6,11 @@
     <h1 class="auth-title">Login</h1> 
     <form method="post"> 
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"> 
- 
       <div class="auth-field"> 
         <input type="text" name="username" id="username" placeholder=" " required autofocus autocomplete="username"> 
         <label for="username">Username</label> 
         <i class="bi bi-person auth-icon" aria-hidden="true"></i> 
       </div> 
- 
       <div class="auth-field"> 
         <input type="password" name="password" id="password" placeholder=" " required autocomplete="current-password"> 
         <label for="password">Password</label> 
@@ -20,17 +18,14 @@
           <i class="bi bi-eye-slash"></i> 
         </button> 
       </div> 
- 
       <button class="auth-submit">Login</button> 
     </form> 
- 
     <p class="auth-footer"> 
       <span>Don't have an account?</span> 
       <a href="{{ url_for('register') }}">Register</a> 
     </p> 
   </div> 
 </div> 
- 
 <script> 
   (function () { 
     var btn = document.getElementById('togglePassword'); 

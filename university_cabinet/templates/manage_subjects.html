@@ -1,25 +1,23 @@
 {% extends "base.html" %}
-
 {% block title %}Manage Subjects{% endblock %}
-
 {% block content %}
-
-<div class="container py-4">
-
-    <h1 class="mb-4">Manage Subjects</h1>
-
-    <!-- ADD SUBJECT -->
-
-    <div class="card p-4 mb-4">
-
-        <h4>Add New Subject</h4>
-
-        <form method="POST" class="d-flex gap-2 mt-3">
-
+<div class="sd">
+    <header class="sd-header">
+        <div class="sd-header__icon"><i class="bi bi-journal-bookmark"></i></div>
+        <div>
+            <h1 class="sd-header__title">Manage Subjects</h1>
+            <p class="sd-header__subtitle">Add and remove subjects</p>
+        </div>
+    </header>
+    <section class="sd-card sd-card--static mb-4">
+        <div class="sd-card__head">
+            <span class="sd-card__head-icon"><i class="bi bi-plus-lg"></i></span>
+            <h2 class="sd-card__title">Add New Subject</h2>
+        </div>
+        <form method="POST" class="sd-inline-form">
             <input type="hidden"
                    name="csrf_token"
                    value="{{ csrf_token() }}">
-
             <input
                 type="text"
                 name="name"
@@ -27,63 +25,53 @@
                 placeholder="Subject name e.g. Mathematics"
                 required
             >
-
-            <button type="submit" class="btn btn-primary">
+            <button type="submit" class="btn sd-btn sd-btn--primary">
+                <i class="bi bi-plus-circle"></i>
                 Add Subject
             </button>
-
         </form>
-
-    </div>
-
-
-    <!-- SUBJECTS -->
-
-    <h4>Subjects</h4>
-
+    </section>
     {% if subjects %}
-
-        <div class="list-group mt-3">
-
+    <section class="sd-card sd-card--static sd-card--flush">
+        <div class="sd-card__head sd-card__head--lg">
+            <span class="sd-card__head-icon"><i class="bi bi-book"></i></span>
+            <h2 class="sd-card__title">Subjects</h2>
+            <span class="sd-pill">{{ subjects|length }}</span>
+        </div>
+        <ul class="sd-list sd-list--flush">
             {% for subject in subjects %}
-
-            <div class="list-group-item d-flex justify-content-between align-items-center">
-
-                <strong>{{ subject.name }}</strong>
-
+            <li class="sd-list__item">
+                <span class="sd-list__main">
+                    <span class="sd-card__head-icon"><i class="bi bi-journal-text"></i></span>
+                    {{ subject.name }}
+                </span>
                 <form
                     method="POST"
                     action="{{ url_for('delete_subject', subject_id=subject.id) }}"
                 >
-
                     <input type="hidden"
                            name="csrf_token"
                            value="{{ csrf_token() }}">
-
                     <button
                         type="submit"
-                        class="btn btn-danger btn-sm"
+                        class="btn btn-sm sd-btn sd-btn--danger"
                         onclick="return confirm('Delete this subject?')"
                     >
+                        <i class="bi bi-trash3"></i>
                         Delete
                     </button>
-
                 </form>
-
-            </div>
-
+            </li>
             {% endfor %}
-
-        </div>
-
+        </ul>
+    </section>
     {% else %}
-
-        <p class="text-muted mt-3">
-            No subjects yet.
-        </p>
-
+    <div class="sd-card sd-card--static">
+        <div class="sd-empty sd-empty--sm">
+            <div class="sd-empty__icon"><i class="bi bi-journal-x"></i></div>
+            <div class="sd-empty__title">No subjects yet.</div>
+        </div>
+    </div>
     {% endif %}
-
 </div>
-
 {% endblock %}

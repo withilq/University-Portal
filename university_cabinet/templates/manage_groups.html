@@ -1,24 +1,23 @@
 {% extends "base.html" %}
-
 {% block title %}Manage Groups{% endblock %}
-
 {% block content %}
-
-<div class="container py-4">
-
-    <h1 class="mb-4">Manage Groups</h1>
-
-    <!-- CREATE GROUP -->
-    <div class="card p-4 mb-4">
-
-        <h4>Create New Group</h4>
-
-        <form method="POST" class="d-flex gap-2 mt-3">
-
+<div class="sd">
+    <header class="sd-header">
+        <div class="sd-header__icon"><i class="bi bi-collection"></i></div>
+        <div>
+            <h1 class="sd-header__title">Manage Groups</h1>
+            <p class="sd-header__subtitle">Create groups and organise students</p>
+        </div>
+    </header>
+    <section class="sd-card sd-card--static mb-4">
+        <div class="sd-card__head">
+            <span class="sd-card__head-icon"><i class="bi bi-plus-lg"></i></span>
+            <h2 class="sd-card__title">Create New Group</h2>
+        </div>
+        <form method="POST" class="sd-inline-form">
             <input type="hidden"
                    name="csrf_token"
                    value="{{ csrf_token() }}">
-
             <input
                 type="text"
                 name="name"
@@ -26,92 +25,67 @@
                 placeholder="Group name e.g. IT-101"
                 required
             >
-
-            <button type="submit" class="btn btn-primary">
+            <button type="submit" class="btn sd-btn sd-btn--primary">
+                <i class="bi bi-plus-circle"></i>
                 Add Group
             </button>
-
         </form>
-
-    </div>
-
-
-    <!-- GROUPS -->
-
-    <h4>Groups</h4>
-
+    </section>
+    <h2 class="sd-section-title">
+        <i class="bi bi-people"></i>
+        Groups
+    </h2>
     {% if groups %}
-
+    <div class="sd-stack">
         {% for group in groups %}
+        <section class="sd-card sd-card--static sd-card--flush">
+            <div class="sd-panel__head">
 
-        <div class="card mt-3">
-
-            <!-- GROUP HEADER -->
-            <div class="card-header d-flex justify-content-between align-items-center">
-
-                <div>
-                    <strong>{{ group.name }}</strong>
-
-                    <span class="text-muted">
-                        — {{ group.students|length }} students
+                <div class="sd-panel__who">
+                    <span class="sd-card__head-icon"><i class="bi bi-people-fill"></i></span>
+                    <strong class="sd-card__title">{{ group.name }}</strong>
+                    <span class="sd-pill">
+                        <i class="bi bi-person"></i>
+                        {{ group.students|length }} students
                     </span>
                 </div>
-
-
-                <!-- DELETE GROUP -->
-
                 {% if group.students|length == 0 %}
-
                 <form
                     method="POST"
                     action="{{ url_for('delete_group', group_id=group.id) }}"
                 >
-
                     <input type="hidden"
                            name="csrf_token"
                            value="{{ csrf_token() }}">
-
                     <button
                         type="submit"
-                        class="btn btn-danger btn-sm"
+                        class="btn btn-sm sd-btn sd-btn--danger"
                         onclick="return confirm('Delete this group?')"
                     >
+                        <i class="bi bi-trash3"></i>
                         Delete
                     </button>
-
                 </form>
-
                 {% else %}
-
                 <button
-                    class="btn btn-secondary btn-sm"
+                    class="btn btn-sm sd-btn sd-btn--muted"
                     disabled
                 >
+                    <i class="bi bi-lock"></i>
                     Cannot Delete
                 </button>
-
                 {% endif %}
-
             </div>
-
-
-            <!-- GROUP BODY -->
-
-            <div class="card-body">
-
-                <h6>Students</h6>
-
-
+            <div class="sd-panel__body">
+                <h3 class="sd-label">Students</h3>
                 {% if group.students %}
-
-                    <ul class="list-group mb-3">
-
+                    <ul class="sd-list">
                         {% for student in group.students %}
-
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-
-                            {{ student.username }}
-
+                        <li class="sd-list__item">
+                            <span class="sd-list__main">
+                                <span class="sd-avatar-sm"><i class="bi bi-person-fill"></i></span>
+                                {{ student.username }}
+                            </span>
                             <form
                                 method="POST"
                                 action="{{ url_for(
@@ -120,95 +94,73 @@
                                     student_id=student.id
                                 ) }}"
                             >
-
                                 <input type="hidden"
                                        name="csrf_token"
                                        value="{{ csrf_token() }}">
-
                                 <button
                                     type="submit"
-                                    class="btn btn-warning btn-sm"
+                                    class="btn btn-sm sd-btn sd-btn--warning"
                                 >
+                                    <i class="bi bi-person-dash"></i>
                                     Remove
                                 </button>
-
                             </form>
-
                         </li>
-
                         {% endfor %}
-
                     </ul>
-
                 {% else %}
-
-                    <p class="text-muted">
+                    <p class="sd-muted mb-0">
                         No students in this group.
                     </p>
-
                 {% endif %}
-
-
-                <!-- ADD STUDENT -->
-
                 {% if students_without_group %}
-
                 <form
                     method="POST"
                     action="{{ url_for(
                         'add_student_to_group',
                         group_id=group.id
                     ) }}"
-                    class="d-flex gap-2 mt-3"
+                    class="sd-inline-form sd-addbar"
                 >
-
                     <input type="hidden"
                            name="csrf_token"
                            value="{{ csrf_token() }}">
-
                     <select
                         name="student_id"
                         class="form-select"
                         required
                     >
-
-                        <option value="">
-                            Select student
-                        </option>
-
+                        <option value="">Select student</option>
                         {% for student in students_without_group %}
-
                         <option value="{{ student.id }}">
                             {{ student.username }}
                         </option>
-
                         {% endfor %}
-
                     </select>
-
                     <button
                         type="submit"
-                        class="btn btn-success"
+                        class="btn sd-btn sd-btn--success"
                     >
+                        <i class="bi bi-person-plus"></i>
                         Add Student
                     </button>
-
                 </form>
-
                 {% else %}
-
-                <p class="text-muted mt-3">
+                <p class="sd-muted mb-0 sd-addbar">
                     No students without a group.
                 </p>
-
                 {% endif %}
             </div>
-        </div>
+        </section>
         {% endfor %}
+    </div>
     {% else %}
-        <p class="text-muted">
-            No groups yet.
-        </p>
+    <div class="sd-card sd-card--static">
+        <div class="sd-empty sd-empty--sm">
+            <div class="sd-empty__icon"><i class="bi bi-collection"></i></div>
+            <div class="sd-empty__title">No groups yet.</div>
+        </div>
+    </div>
     {% endif %}
 </div>
 {% endblock %}

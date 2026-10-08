@@ -1,223 +1,171 @@
 {% extends "base.html" %}
-
-{% block title %}Tələbə Kabineti{% endblock %}
-
+{% block title %}Student Dashboard{% endblock %}
 {% block content %}
-
-<h2 class="mb-4">
-    <i class="bi bi-speedometer2 text-primary"></i>
-    Tələbə Kabineti
-</h2>
-
-
-<!-- PERSONAL INFORMATION -->
-
-<div class="row g-3 mb-4">
-
-    <div class="col-md-5">
-
-        <div class="card shadow-sm border-0 h-100">
-
-            <div class="card-body">
-
-                <h5 class="card-title mb-3">
-                    <i class="bi bi-person-badge"></i>
-                    Şəxsi məlumatlar
-                </h5>
-
-                <p class="mb-1">
-                    <strong>İstifadəçi adı:</strong>
-                    {{ current_user.username }}
-                </p>
-
-                <p class="mb-1">
-                    <strong>E-poçt:</strong>
-                    {{ current_user.email }}
-                </p>
-
-                <p class="mb-1">
-                    <strong>Rol:</strong>
-                    Tələbə
-                </p>
-
-                <p class="mb-0">
-                    <strong>Qrup:</strong>
-
-                    {% if current_user.group %}
-                        {{ current_user.group.name }}
-                    {% else %}
-                        <span class="text-muted">
-                            Qrup təyin edilməyib
+<div class="sd">
+    <header class="sd-header">
+        <div class="sd-header__icon">
+            <i class="bi bi-speedometer2"></i>
+        </div>
+        <div>
+            <h1 class="sd-header__title">Student Dashboard</h1>
+            <p class="sd-header__subtitle">An overview of your academic performance</p>
+        </div>
+    </header>
+    <div class="row g-4 mb-4">
+        <div class="col-lg-5">
+            <section class="sd-card sd-profile h-100">
+                <div class="sd-card__head">
+                    <span class="sd-card__head-icon"><i class="bi bi-person-badge"></i></span>
+                    <h2 class="sd-card__title">Personal Information</h2>
+                </div>
+                <div class="sd-profile__top">
+                    <div class="sd-avatar">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+                    <div class="sd-profile__who">
+                        <div class="sd-profile__name">{{ current_user.username }}</div>
+                        <span class="sd-role">
+                            <i class="bi bi-mortarboard-fill"></i>
+                            Student
                         </span>
-                    {% endif %}
-
-                </p>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- STATISTICS -->
-
-    <div class="col-md-7">
-
-        <div class="row g-3 h-100">
-
-            <div class="col-6">
-
-                <div class="card shadow-sm border-0 h-100 text-center stat-card">
-
-                    <div class="card-body">
-
-                        <div class="text-muted small">
-                            Fənlərin sayı
-                        </div>
-
-                        <div class="display-6 fw-bold text-primary">
-                            {{ grades|length }}
-                        </div>
-
                     </div>
-
                 </div>
-
-            </div>
-
-
-            <div class="col-6">
-
-                <div class="card shadow-sm border-0 h-100 text-center stat-card">
-
-                    <div class="card-body">
-
-                        <div class="text-muted small">
-                            Orta bal
+                <ul class="sd-info">
+                    <li class="sd-info__item">
+                        <span class="sd-info__icon"><i class="bi bi-envelope"></i></span>
+                        <div class="sd-info__text">
+                            <span class="sd-info__label">Email</span>
+                            <span class="sd-info__value">{{ current_user.email }}</span>
                         </div>
-
-                        <div class="display-6 fw-bold text-success">
-                            {{ average if average is not none else '—' }}
+                    </li>
+                    <li class="sd-info__item">
+                        <span class="sd-info__icon"><i class="bi bi-people"></i></span>
+                        <div class="sd-info__text">
+                            <span class="sd-info__label">Group</span>
+                            <span class="sd-info__value">
+                                {% if current_user.group %}
+                                    {{ current_user.group.name }}
+                                {% else %}
+                                    <span class="sd-muted">No group assigned</span>
+                                {% endif %}
+                            </span>
                         </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
+                    </li>
+                </ul>
+            </section>
         </div>
-
+        <div class="col-lg-7">
+            <div class="row g-4 h-100">
+                <div class="col-sm-6">
+                    <div class="sd-card sd-stat h-100">
+                        <div class="sd-stat__icon"><i class="bi bi-book"></i></div>
+                        <div class="sd-stat__label">Number of Subjects</div>
+                        <div class="sd-stat__value">{{ grades|length }}</div>
+                        <div class="sd-stat__hint">Subjects with grades</div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="sd-card sd-stat sd-stat--main h-100">
+                        <div class="sd-stat__row">
+                            <div>
+                                <div class="sd-stat__icon"><i class="bi bi-graph-up-arrow"></i></div>
+                                <div class="sd-stat__label">Average Grade</div>
+                            </div>
+                            <div class="sd-ring" style="--p: {{ average if average is not none else 0 }};">
+                                <div class="sd-ring__inner">
+                                    <span class="sd-ring__value">{{ average if average is not none else '—' }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="sd-stat__hint">Overall performance across all subjects</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-
-</div>
-
-
-<!-- GRADES -->
-
-<div class="card shadow-sm border-0">
-
-    <div class="card-header bg-white fw-semibold">
-
-        <i class="bi bi-journal-text"></i>
-        Qiymətlərim
-
-    </div>
-
-
-    <div class="table-responsive">
-
-        <table class="table table-hover align-middle mb-0">
-
-            <thead class="table-light">
-
-                <tr>
-                    <th>#</th>
-                    <th>Fənn</th>
-                    <th>Semestr</th>
-                    <th class="text-end">Bal</th>
-                </tr>
-
-            </thead>
-
-
-            <tbody>
-
-                {% for g in grades %}
-
-                <tr>
-
-                    <td>
-                        {{ loop.index }}
-                    </td>
-
-
-                    <td>
-
-                        {% if g.subject %}
-                            {{ g.subject.name }}
-                        {% else %}
-                            —
-                        {% endif %}
-
-                    </td>
-
-
-                    <td>
-
-                        {% if g.semester %}
-                            {{ g.semester.name }}
-
-                            {% if g.semester.academic_year %}
-                                ({{ g.semester.academic_year.name }})
+    <section class="sd-card sd-grades">
+        <div class="sd-card__head sd-card__head--lg">
+            <span class="sd-card__head-icon"><i class="bi bi-journal-text"></i></span>
+            <div>
+                <h2 class="sd-card__title">My Grades</h2>
+                <p class="sd-card__subtitle">Your academic results by subject</p>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table sd-table align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th class="sd-col-index">#</th>
+                        <th>Subject</th>
+                        <th>Teacher</th>
+                        <th class="d-none d-md-table-cell">Semester</th>
+                        <th class="text-end">Grade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for g in grades %}
+                    <tr>
+                        <td class="sd-col-index">
+                            <span class="sd-index">{{ loop.index }}</span>
+                        </td>
+                        <td>
+                            <div class="sd-subject">
+                                {% if g.subject %}
+                                    {{ g.subject.name }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </div>
+                            <div class="sd-sub d-md-none">
+                                {% if g.semester %}
+                                    {{ g.semester.name }}
+                                    {% if g.semester.academic_year %}
+                                        · {{ g.semester.academic_year.name }}
+                                    {% endif %}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td>
+                            {% for assignment in teacher_assignments %}
+                                {% if assignment.subject_id == g.subject_id and assignment.semester_id == g.semester_id %}
+                                    {{ assignment.teacher.username }}
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td class="d-none d-md-table-cell">
+                            {% if g.semester %}
+                                <span class="sd-semester">{{ g.semester.name }}</span>
+                                {% if g.semester.academic_year %}
+                                    <span class="sd-year">{{ g.semester.academic_year.name }}</span>
+                                {% endif %}
+                            {% else %}
+                                —
                             {% endif %}
-
-                        {% else %}
-                            —
-                        {% endif %}
-
-                    </td>
-
-
-                    <td class="text-end">
-
-                        <span class="badge fs-6
-                            {{ 'bg-success'
-                            if g.grade >= 70
-                            else 'bg-warning text-dark'
-                            if g.grade >= 50
-                            else 'bg-danger' }}">
-
-                            {{ '%g'|format(g.grade) }}
-
-                        </span>
-
-                    </td>
-
-                </tr>
-
-                {% else %}
-
-                <tr>
-
-                    <td colspan="4"
-                        class="text-center text-muted py-4">
-
-                        Hələ qiymət əlavə olunmayıb.
-
-                    </td>
-
-                </tr>
-
-                {% endfor %}
-
-            </tbody>
-
-        </table>
-
-    </div>
-
+                        </td>
+                        <td class="text-end">
+                            <span class="sd-grade {{ 'sd-grade--high' if g.grade >= 70 else 'sd-grade--mid' if g.grade >= 50 else 'sd-grade--low' }}">
+                                {{ '%g'|format(g.grade) }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr class="sd-empty-row">
+                        <td colspan="5" class="p-0">
+                            <div class="sd-empty">
+                                <div class="sd-empty__icon"><i class="bi bi-inbox"></i></div>
+                                <div class="sd-empty__title">No grades have been added yet.</div>
+                                <p class="sd-empty__text">
+                                    Your subject results will appear here once your grades are entered.
+                                </p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
 </div>
-
 {% endblock %}

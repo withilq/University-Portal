@@ -1,208 +1,106 @@
 {% extends "base.html" %}
-
 {% block title %}Teacher Dashboard{% endblock %}
-
 {% block content %}
-
-<h2 class="mb-4">
-    <i class="bi bi-person-workspace text-primary"></i>
-    Teacher Dashboard
-</h2>
-
-
-<!-- MY SUBJECTS -->
-
-<div class="card shadow-sm border-0 mb-4">
-
-    <div class="card-header bg-white fw-semibold">
-        <i class="bi bi-book"></i>
-        My Subjects
-    </div>
-
-    <div class="card-body">
-
-        {% if assignments %}
-
-        <div class="row g-3">
-
-            {% for assignment in assignments %}
-
-            <div class="col-md-4">
-
-                <div class="card border h-100">
-
-                    <div class="card-body">
-
-                        <h5 class="mb-2">
-                            {{ assignment.subject.name }}
-                        </h5>
-
-                        <p class="text-muted mb-0">
-                            Group: {{ assignment.group.name }}
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            {% endfor %}
-
+<div class="sd">
+    <header class="sd-header">
+        <div class="sd-header__icon"><i class="bi bi-person-workspace"></i></div>
+        <div>
+            <h1 class="sd-header__title">Teacher Dashboard</h1>
+            <p class="sd-header__subtitle">Your subjects, students and grades</p>
         </div>
-
-        {% else %}
-
-        <p class="text-muted mb-0">
-            No subjects have been assigned to you yet.
-        </p>
-
-        {% endif %}
-
-    </div>
-
-</div>
-
-
-<!-- GRADES AND STUDENTS -->
-
-<div class="row g-4">
-
-
-    <!-- ADD / UPDATE GRADE -->
-
-    <div class="col-lg-4">
-
-        <div class="card shadow-sm border-0 sticky-lg-top"
-             style="top: 1rem;">
-
-            <div class="card-header bg-white fw-semibold">
-
-                <i class="bi bi-pencil-square"></i>
-                Add / Update Grade
-
+    </header>
+    <section class="sd-card sd-card--static mb-4">
+        <div class="sd-card__head">
+            <span class="sd-card__head-icon"><i class="bi bi-book"></i></span>
+            <h2 class="sd-card__title">My Subjects</h2>
+        </div>
+        {% if assignments %}
+        <div class="row g-3">
+            {% for assignment in assignments %}
+            <div class="col-md-6 col-xl-4">
+                <div class="sd-tile">
+                    <span class="sd-tile__icon"><i class="bi bi-journal-bookmark"></i></span>
+                    <div class="sd-tile__body">
+                        <div class="sd-tile__title">{{ assignment.subject.name }}</div>
+                        <div class="sd-tile__meta">
+                            <i class="bi bi-people"></i>
+                            Group: {{ assignment.group.name }}
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <div class="card-body">
-
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="sd-empty sd-empty--sm">
+            <div class="sd-empty__icon"><i class="bi bi-journal-x"></i></div>
+            <div class="sd-empty__title">No subjects have been assigned to you yet.</div>
+        </div>
+        {% endif %}
+    </section>
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="sd-card sd-card--static sd-sticky">
+                <div class="sd-card__head">
+                    <span class="sd-card__head-icon"><i class="bi bi-pencil-square"></i></span>
+                    <h2 class="sd-card__title">Add / Update Grade</h2>
+                </div>
                 {% if students and assignments and semesters %}
-
                 <form method="post"
                       action="{{ url_for('save_grade') }}"
                       id="grade-form">
-
                     <input type="hidden"
                            name="csrf_token"
                            value="{{ csrf_token() }}">
-
-
-                    <!-- STUDENT -->
-
                     <div class="mb-3">
-
-                        <label class="form-label">
-                            Student
-                        </label>
-
+                        <label class="form-label">Student</label>
                         <select name="student_id"
                                 id="f-student"
                                 class="form-select"
                                 required>
-
-                            <option value="">
-                                Select student
-                            </option>
-
+                            <option value="">Select student</option>
                             {% for s in students %}
-
                             <option value="{{ s.id }}">
                                 {{ s.username }} ({{ s.email }})
                             </option>
-
                             {% endfor %}
-
                         </select>
-
                     </div>
-
-
-                    <!-- SUBJECT / GROUP -->
-
                     <div class="mb-3">
-
-                        <label class="form-label">
-                            Subject & Group
-                        </label>
-
+                        <label class="form-label">Subject &amp; Group</label>
                         <select name="assignment_id"
                                 id="f-assignment"
                                 class="form-select"
                                 required>
-
-                            <option value="">
-                                Select subject
-                            </option>
-
+                            <option value="">Select subject</option>
                             {% for assignment in assignments %}
-
                             <option value="{{ assignment.id }}">
                                 {{ assignment.subject.name }}
                                 — {{ assignment.group.name }}
                             </option>
-
                             {% endfor %}
-
                         </select>
-
                     </div>
-
-
-                    <div class="row">
-
-                        <!-- SEMESTER -->
-
-                        <div class="col-6 mb-3">
-
-                            <label class="form-label">
-                                Semester
-                            </label>
-
+                    <div class="row g-3 mb-3">
+                        <div class="col-sm-6 col-lg-12 col-xxl-6">
+                            <label class="form-label">Semester</label>
                             <select name="semester_id"
                                     id="f-semester"
                                     class="form-select"
                                     required>
-
-                                <option value="">
-                                    Select semester
-                                </option>
-
+                                <option value="">Select semester</option>
                                 {% for semester in semesters %}
-
                                 <option value="{{ semester.id }}">
-
                                     {{ semester.name }}
-
                                     {% if semester.academic_year %}
                                         ({{ semester.academic_year.name }})
                                     {% endif %}
-
                                 </option>
-
                                 {% endfor %}
-
                             </select>
-
                         </div>
-
-
-                        <!-- GRADE -->
-
-                        <div class="col-6 mb-3">
-
-                            <label class="form-label">
-                                Grade (0-100)
-                            </label>
-
+                        <div class="col-sm-6 col-lg-12 col-xxl-6">
+                            <label class="form-label">Grade (0-100)</label>
                             <input type="number"
                                    name="grade"
                                    id="f-grade"
@@ -211,139 +109,97 @@
                                    max="100"
                                    step="0.1"
                                    required>
-
                         </div>
-
                     </div>
-
-
-                    <button class="btn btn-primary w-100">
-
+                    <button class="btn sd-btn sd-btn--primary w-100">
                         <i class="bi bi-check2-circle"></i>
                         Save Grade
-
                     </button>
-
-
-                    <div class="form-text mt-2">
-
-                        If the student already has a grade for
-                        this subject and semester, it will be updated.
-
+                    <div class="sd-note">
+                        <i class="bi bi-info-circle"></i>
+                        <span>
+                            If the student already has a grade for
+                            this subject and semester, it will be updated.
+                        </span>
                     </div>
-
                 </form>
-
                 {% else %}
-
-                <p class="text-muted mb-0">
-
-                    You need an assigned subject, group,
-                    student, and semester.
-
-                </p>
-
+                <div class="sd-note sd-note--plain">
+                    <i class="bi bi-info-circle"></i>
+                    <span>
+                        You need an assigned subject, group,
+                        student, and semester.
+                    </span>
+                </div>
                 {% endif %}
-
             </div>
-
         </div>
-
-    </div>
-
-
-    <!-- STUDENTS -->
-
-    <div class="col-lg-8">
-
-        <div class="card shadow-sm border-0">
-
-            <div class="card-header bg-white fw-semibold">
-
-                <i class="bi bi-people"></i>
-                Students ({{ students|length }})
-
-            </div>
-
-
-            <div class="table-responsive">
-
-                <table class="table table-hover align-middle mb-0">
-
-                    <thead class="table-light">
-
-                        <tr>
-
-                            <th>Student</th>
-
-                            <th>Email</th>
-
-                            <th>Grades</th>
-
-                        </tr>
-
-                    </thead>
-
-
-                    <tbody>
-
-                        {% for s in students %}
-
-                        <tr>
-
-                            <td class="fw-semibold">
-                                {{ s.username }}
-                            </td>
-
-                            <td class="text-muted">
-                                {{ s.email }}
-                            </td>
-
-                            <td>
-
-                                {% for g in s.grades %}
-
-                                <span class="badge text-bg-secondary me-1 mb-1">
-
-                                    {{ g.subject.name }}
-                                    ·
-                                    {{ g.semester.name }}
-                                    :
-                                    {{ '%g'|format(g.grade) }}
-
-                                </span>
-
-                                {% else %}
-
-                                <span class="text-muted small">
-                                    No grades
-                                </span>
-
-                                {% endfor %}
-
-                            </td>
-
-                        </tr>
-
-                        {% else %}
-
-                        <tr>
-
-                            <td colspan="3"
-                                class="text-center text-muted py-4">
-
-                                No students found.
-
-                            </td>
-
-                        </tr>
-
-                        {% endfor %}
-
-                    </tbody>
-
-                </table>
-              </div>
+        <div class="col-lg-8">
+            <section class="sd-card sd-card--static sd-card--flush">
+                <div class="sd-card__head sd-card__head--lg">
+                    <span class="sd-card__head-icon"><i class="bi bi-people"></i></span>
+                    <h2 class="sd-card__title">Students ({{ students|length }})</h2>
+                </div>
+                <div class="table-responsive">
+                    <table class="table sd-table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th class="d-none d-md-table-cell">Email</th>
+                                <th>Grades</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for s in students %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="sd-avatar-sm"><i class="bi bi-person-fill"></i></span>
+                                        <div class="min-w-0">
+                                            <div class="sd-subject">{{ s.username }}</div>
+                                            <div class="sd-sub d-md-none">{{ s.email }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="d-none d-md-table-cell sd-muted">
+                                    {{ s.email }}
+                                </td>
+                                <td>
+                                    <div class="sd-chips">
+                                        {% for g in s.grades %}
+                                        <span class="sd-chip">
+                                            {{ g.subject.name }}
+                                            ·
+                                            {{ g.semester.name }}
+                                            <b class="sd-chip__grade
+                                                {{ 'sd-chip__grade--high'
+                                                if g.grade >= 70
+                                                else 'sd-chip__grade--mid'
+                                                if g.grade >= 50
+                                                else 'sd-chip__grade--low' }}">
+                                                {{ '%g'|format(g.grade) }}
+                                            </b>
+                                        </span>
+                                        {% else %}
+                                        <span class="sd-muted small">No grades</span>
+                                        {% endfor %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr class="sd-empty-row">
+                                <td colspan="3" class="p-0">
+                                    <div class="sd-empty sd-empty--sm">
+                                        <div class="sd-empty__icon"><i class="bi bi-people"></i></div>
+                                        <div class="sd-empty__title">No students found.</div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
         </div>
     </div>
 </div>

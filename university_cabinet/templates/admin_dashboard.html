@@ -1,62 +1,76 @@
 {% extends "base.html" %}
-
 {% block title %}Admin Dashboard{% endblock %}
-
 {% block content %}
-
-<div class="container py-4">
-
-    <h1>Admin Dashboard</h1>
-    <p>Welcome, Admin!</p>
-
-    <div class="row g-3 mt-3">
-
-        <div class="col-md-3">
-            <div class="card p-3">
-                <h5>Students</h5>
-                <h2>{{ student_count }}</h2>
+<div class="sd">
+    <header class="sd-header">
+        <div class="sd-header__icon"><i class="bi bi-shield-check"></i></div>
+        <div>
+            <h1 class="sd-header__title">Admin Dashboard</h1>
+            <p class="sd-header__subtitle">Welcome, Admin!</p>
+        </div>
+    </header>
+    <div class="row g-4 mb-4">
+        <div class="col-sm-6 col-xl-3">
+            <div class="sd-card sd-stat h-100">
+                <div class="sd-stat__icon"><i class="bi bi-mortarboard"></i></div>
+                <div class="sd-stat__label">Students</div>
+                <div class="sd-stat__value">{{ student_count }}</div>
             </div>
         </div>
-
-        <div class="col-md-3">
-            <div class="card p-3">
-                <h5>Teachers</h5>
-                <h2>{{ teacher_count }}</h2>
+        <div class="col-sm-6 col-xl-3">
+            <div class="sd-card sd-stat h-100">
+                <div class="sd-stat__icon"><i class="bi bi-person-workspace"></i></div>
+                <div class="sd-stat__label">Teachers</div>
+                <div class="sd-stat__value">{{ teacher_count }}</div>
             </div>
         </div>
-
-        <div class="col-md-3">
-            <div class="card p-3">
-                <h5>Groups</h5>
-                <h2>{{ group_count }}</h2>
+        <div class="col-sm-6 col-xl-3">
+            <div class="sd-card sd-stat h-100">
+                <div class="sd-stat__icon"><i class="bi bi-people"></i></div>
+                <div class="sd-stat__label">Groups</div>
+                <div class="sd-stat__value">{{ group_count }}</div>
             </div>
         </div>
-
-        <div class="col-md-3">
-            <div class="card p-3">
-                <h5>Subjects</h5>
-                <h2>{{ subject_count }}</h2>
+        <div class="col-sm-6 col-xl-3">
+            <div class="sd-card sd-stat h-100">
+                <div class="sd-stat__icon"><i class="bi bi-book"></i></div>
+                <div class="sd-stat__label">Subjects</div>
+                <div class="sd-stat__value">{{ subject_count }}</div>
             </div>
         </div>
-
     </div>
-
-    <hr class="my-4">
-
-    <div class="d-flex gap-3">
-        <a href="{{ url_for('manage_groups') }}" class="btn btn-primary">
-    Manage Groups
-        </a>
-
-        <a href="{{ url_for('manage_subjects') }}" class="btn btn-primary">
-    Manage Subjects
-    </a>
-
-        <a href="{{ url_for('assign_teachers') }}" class="btn btn-primary">
-    Assign Teachers
-    </a>
+    <h2 class="sd-section-title">
+        <i class="bi bi-lightning-charge"></i>
+        Quick actions
+    </h2>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <a href="{{ url_for('manage_groups') }}" class="sd-card sd-action">
+                <span class="sd-action__icon"><i class="bi bi-collection"></i></span>
+                <span class="sd-action__body">
+                    <span class="sd-action__title">Manage Groups</span>
+                </span>
+                <i class="bi bi-arrow-right sd-action__arrow"></i>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="{{ url_for('manage_subjects') }}" class="sd-card sd-action">
+                <span class="sd-action__icon"><i class="bi bi-journal-bookmark"></i></span>
+                <span class="sd-action__body">
+                    <span class="sd-action__title">Manage Subjects</span>
+                </span>
+                <i class="bi bi-arrow-right sd-action__arrow"></i>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="{{ url_for('assign_teachers') }}" class="sd-card sd-action">
+                <span class="sd-action__icon"><i class="bi bi-person-lines-fill"></i></span>
+                <span class="sd-action__body">
+                    <span class="sd-action__title">Assign Teachers</span>
+                </span>
+                <i class="bi bi-arrow-right sd-action__arrow"></i>
+            </a>
+        </div>
     </div>
-
 </div>
-
 {% endblock %}
